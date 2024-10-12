@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const productSchema = z.object({
+export const addProductSchema = z.object({
   body: z
     .object({
       name: z.string().min(1, { message: 'Name is required' }),
@@ -8,6 +8,14 @@ export const productSchema = z.object({
       description: z.string().min(1, { message: 'Description is required' }),
       price: z.number().min(0, { message: 'Price must be a positive number' }),
       imageUrl: z.string().url({ message: 'Image is required' }),
+    })
+    .strict(),
+});
+
+export const getProductByIdSchema = z.object({
+  params: z
+    .object({
+      id: z.string().min(10),
     })
     .strict(),
 });
