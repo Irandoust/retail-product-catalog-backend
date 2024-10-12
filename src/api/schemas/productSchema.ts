@@ -19,3 +19,9 @@ export const getProductByIdSchema = z.object({
     })
     .strict(),
 });
+
+export const searchProductSchema = z.object({
+  query: z.object({
+    term: z.string().min(3, { message: 'Search term cannot be empty' }),
+  }),
+});
