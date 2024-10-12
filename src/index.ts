@@ -2,12 +2,15 @@ import express, { Request, Response } from 'express';
 import { env } from './config';
 import { StatusCodes } from 'http-status-codes';
 import { productRouter } from './api/routes/productRouter';
+import { rateLimiter } from './api/middlewares/rateLimiter';
 
 const app = express();
 
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
+
+app.use(rateLimiter);
 
 app.use('/products', productRouter);
 

@@ -14,4 +14,6 @@ export const env = cleanEnv(process.env, {
     default: 3,
     desc: 'Max allowed distance for fuzzy search.',
   }),
+  COMMON_RATE_LIMIT_MAX_REQUESTS: num({ default: 100 }),
+  COMMON_RATE_LIMIT_WINDOW_MS: num({ default: 100 }),
 });
