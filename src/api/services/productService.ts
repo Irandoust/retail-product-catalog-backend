@@ -56,4 +56,21 @@ export class ProductService {
       );
     }
   };
+
+  getProductById = (id: string): ServiceResponse<Product | null> => {
+    try {
+      const repositoryResponse = this.productRepository.getProductById(id);
+
+      return ServiceResponse.success<Product | null>(
+        `${repositoryResponse ? 'Product' : 'No product'} found.`,
+        repositoryResponse ?? null,
+        repositoryResponse ? StatusCodes.OK : StatusCodes.BAD_REQUEST,
+      );
+    } catch (err) {
+      return exceptionHandler(
+        err,
+        'An error occurred while adding getting the products.',
+      );
+    }
+  };
 }
