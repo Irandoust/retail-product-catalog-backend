@@ -1,6 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { validateRequest } from '../middlewares/validation';
-import { productSchema } from '../schemas/productSchema';
+import {
+  addProductSchema,
+  getProductByIdSchema,
+} from '../schemas/productSchema';
 import { StatusCodes } from 'http-status-codes';
 import { ProductRepository } from '../repositories/productRepository';
 import { ProductService } from '../services/productService';
@@ -14,7 +17,7 @@ const productController = new ProductController(productService);
 
 productRouter.post(
   '/',
-  validateRequest(productSchema),
+  validateRequest(addProductSchema),
   productController.addProduct,
 );
 
@@ -22,6 +25,12 @@ productRouter.get(
   '/',
   validateRequest(paginationSchema),
   productController.getProducts,
+);
+
+productRouter.get(
+  '/:id',
+  validateRequest(getProductByIdSchema),
+  productController.getProductById,
 );
 
 productRouter.all('*', (req: Request, res: Response, next: NextFunction) => {
