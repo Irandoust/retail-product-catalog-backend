@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { paginationSchema } from './paginationSchema';
 
 export const addProductSchema = z.object({
   body: z
@@ -20,8 +21,18 @@ export const getProductByIdSchema = z.object({
     .strict(),
 });
 
-export const searchProductSchema = z.object({
-  query: z.object({
-    term: z.string().min(3, { message: 'Search term cannot be empty' }),
-  }),
+const searchProductSchema = z.object({
+  query: z
+    .object({
+      term: z
+        .string()
+        .min(3, { message: 'Search term must be at least 3 characters' }),
+    })
+    .strict(),
+});
+
+export const searchWithPaginationSchema = searchProductSchema.extend({
+  query: searchProductSchema.shape.query.extend(
+    paginationSchema.shape.query.shape,
+  ),
 });
