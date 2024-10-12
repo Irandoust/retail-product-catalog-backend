@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { cleanEnv, str, host, port } from 'envalid';
+import { cleanEnv, str, host, port, num } from 'envalid';
 
 dotenv.config();
 
@@ -10,4 +10,8 @@ export const env = cleanEnv(process.env, {
   }),
   HOST: host({ default: 'localhost' }),
   PORT: port({ default: 3000 }),
+  FUZZY_SEARCH_MAX_ALLOWED_DISTANCE: num({
+    default: 3,
+    desc: 'Max allowed distance for fuzzy search.',
+  }),
 });
