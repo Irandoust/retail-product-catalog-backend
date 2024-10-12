@@ -13,5 +13,11 @@ export class ProductRepository {
   getProducts = (): Product[] => {
     return this.products;
   };
+
+  getProductById = (id: string): Product | undefined => {
+    const product = this.products.find((product) => product.id === id);
+
+    return product;
+  };
 }
 export { Product };
