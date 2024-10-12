@@ -15,7 +15,7 @@ export const addProductSchema = z.object({
 export const getProductByIdSchema = z.object({
   params: z
     .object({
-      id: z.string().min(10),
+      id: z.string().uuid(),
     })
     .strict(),
 });
