@@ -3,6 +3,8 @@ import { ServiceResponse } from '../models/serviceResponse';
 import { exceptionHandler } from '../../utils/exceptionHandler';
 import { randomUUID } from 'crypto';
 import { StatusCodes } from 'http-status-codes';
+import { paginate, PaginatedResult } from '../../utils/paginate';
+import { AddProductRequest } from '../models/productModel';
 
 export class ProductService {
   private productRepository: ProductRepository;
@@ -11,21 +13,46 @@ export class ProductService {
     this.productRepository = productRepository;
   }
 
-  addProduct = (product: Product): ServiceResponse<Product | null> => {
+  addProduct = (
+    product: AddProductRequest,
+  ): ServiceResponse<Product | null> => {
     try {
-      product.id = randomUUID();
-
-      const productResponse = this.productRepository.addProduct(product);
+      const repositoryResponse = this.productRepository.addProduct({
+        ...product,
+        id: randomUUID(),
+      });
 
       return ServiceResponse.success<Product>(
         'The product has been added successfully!',
-        productResponse,
+        repositoryResponse,
         StatusCodes.CREATED,
       );
     } catch (err) {
       return exceptionHandler(
         err,
         'An error occurred while adding the product.',
+      );
+    }
+  };
+
+  getProducts = (
+    page: number | undefined,
+    limit: number | undefined,
+  ): ServiceResponse<PaginatedResult<Product> | null> => {
+    try {
+      const repositoryResponse = this.productRepository.getProducts();
+
+      const paginatedResult = paginate(repositoryResponse, page, limit);
+
+      return ServiceResponse.success<PaginatedResult<Product>>(
+        `${repositoryResponse.length} Products found.`,
+        paginatedResult,
+        StatusCodes.OK,
+      );
+    } catch (err) {
+      return exceptionHandler(
+        err,
+        'An error occurred while adding getting the products.',
       );
     }
   };
