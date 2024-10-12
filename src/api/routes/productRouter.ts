@@ -5,6 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import { ProductRepository } from '../repositories/productRepository';
 import { ProductService } from '../services/productService';
 import { ProductController } from '../controllers/productController';
+import { paginationSchema } from '../schemas/paginationSchema';
 
 const productRouter: Router = Router();
 const productRepository = new ProductRepository();
@@ -17,8 +18,14 @@ productRouter.post(
   productController.addProduct,
 );
 
+productRouter.get(
+  '/',
+  validateRequest(paginationSchema),
+  productController.getProducts,
+);
+
 productRouter.all('*', (req: Request, res: Response, next: NextFunction) => {
-  if (['POST'].includes(req.method)) {
+  if (['POST', 'GET'].includes(req.method)) {
     return next();
   }
 
