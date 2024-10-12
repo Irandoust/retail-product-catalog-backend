@@ -5,6 +5,8 @@ import { randomUUID } from 'crypto';
 import { StatusCodes } from 'http-status-codes';
 import { paginate, PaginatedResult } from '../../utils/paginate';
 import { AddProductRequest } from '../models/productModel';
+import { fuzzySearch } from '../../utils/search';
+import { env } from '../../config';
 
 export class ProductService {
   private productRepository: ProductRepository;
@@ -69,7 +71,40 @@ export class ProductService {
     } catch (err) {
       return exceptionHandler(
         err,
-        'An error occurred while adding getting the products.',
+        'An error occurred while getting the product by id.',
+      );
+    }
+  };
+
+  searchProducts = (
+    term: string,
+    page: number | undefined,
+    limit: number | undefined,
+  ): ServiceResponse<PaginatedResult<Product> | null> => {
+    try {
+      const repositoryResponse = this.productRepository.getProducts();
+
+      const maxAllowedFuzzySearchDistance =
+        env.FUZZY_SEARCH_MAX_ALLOWED_DISTANCE;
+
+      const searchResults = fuzzySearch<Product>(
+        term,
+        repositoryResponse,
+        maxAllowedFuzzySearchDistance,
+        (product) => product.name,
+      );
+
+      const paginatedResult = paginate(searchResults, page, limit);
+
+      return ServiceResponse.success<PaginatedResult<Product>>(
+        `${repositoryResponse.length} Products found.`,
+        paginatedResult,
+        StatusCodes.OK,
+      );
+    } catch (err) {
+      return exceptionHandler(
+        err,
+        'An error occurred while searching for the products.',
       );
     }
   };
