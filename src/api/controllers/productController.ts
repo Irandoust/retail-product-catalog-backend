@@ -5,6 +5,7 @@ import { paginationSchema } from '../schemas/paginationSchema';
 import {
   addProductSchema,
   getProductByIdSchema,
+  searchWithPaginationSchema,
 } from '../schemas/productSchema';
 
 export class ProductController {
@@ -31,6 +32,17 @@ export class ProductController {
     const { params } = getProductByIdSchema.parse({ params: req.params });
     const { id } = params;
     const serviceResponse = this.productService.getProductById(id);
+    return serviceResponseHandler(serviceResponse, res);
+  };
+
+  searchProducts = (req: Request, res: Response) => {
+    const { query } = searchWithPaginationSchema.parse({ query: req.query });
+    const { term, page, limit } = query;
+    const serviceResponse = this.productService.searchProducts(
+      term,
+      page,
+      limit,
+    );
     return serviceResponseHandler(serviceResponse, res);
   };
 }
