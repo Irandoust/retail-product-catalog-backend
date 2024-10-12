@@ -1,4 +1,4 @@
-import { Product } from '../models/productModel';
+import { Product } from '../models';
 import { products } from './productsData';
 
 export class ProductRepository {
@@ -20,4 +20,3 @@ export class ProductRepository {
     return product;
   };
 }
-export { Product };

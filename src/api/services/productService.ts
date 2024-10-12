@@ -1,12 +1,14 @@
-import { Product, ProductRepository } from '../repositories/productRepository';
-import { ServiceResponse } from '../models/serviceResponse';
-import { exceptionHandler } from '../../utils/exceptionHandler';
 import { randomUUID } from 'crypto';
 import { StatusCodes } from 'http-status-codes';
-import { paginate, PaginatedResult } from '../../utils/paginate';
-import { AddProductRequest } from '../models/productModel';
-import { fuzzySearch } from '../../utils/search';
+import { ProductRepository } from '../repositories/productRepository';
+import { ServiceResponse, Product, AddProductRequest } from '../models';
 import { env } from '../../config';
+import {
+  exceptionHandler,
+  paginate,
+  PaginatedResult,
+  fuzzySearch,
+} from '../../utils';
 
 export class ProductService {
   private productRepository: ProductRepository;

@@ -1,15 +1,15 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { validateRequest } from '../middlewares/validation';
+import { StatusCodes } from 'http-status-codes';
+import { validateRequest } from '../middlewares';
 import {
   addProductSchema,
   getProductByIdSchema,
   searchWithPaginationSchema,
-} from '../schemas/productSchema';
-import { StatusCodes } from 'http-status-codes';
+  paginationSchema,
+} from '../schemas';
 import { ProductRepository } from '../repositories/productRepository';
 import { ProductService } from '../services/productService';
 import { ProductController } from '../controllers/productController';
-import { paginationSchema } from '../schemas/paginationSchema';
 
 const productRouter: Router = Router();
 const productRepository = new ProductRepository();

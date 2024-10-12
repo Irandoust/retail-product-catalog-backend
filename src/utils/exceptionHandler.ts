@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { ServiceResponse } from '../api/models/serviceResponse';
+import { ServiceResponse } from '../api/models';
 
 export const exceptionHandler = (
   ex: unknown,

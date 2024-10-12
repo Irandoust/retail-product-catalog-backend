@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import type { ZodError, ZodSchema } from 'zod';
 import { StatusCodes } from 'http-status-codes';
-import { ServiceResponse } from '../models/serviceResponse';
+import { ServiceResponse } from '../models';
 
 export const validateRequest =
   (schema: ZodSchema) =>

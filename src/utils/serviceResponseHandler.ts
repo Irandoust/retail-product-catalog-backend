@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ServiceResponse } from '../api/models/serviceResponse';
+import { ServiceResponse } from '../api/models';
 
 export const serviceResponseHandler = (
   serviceResponse: ServiceResponse<unknown>,

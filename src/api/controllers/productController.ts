@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ProductService } from '../services/productService';
-import { serviceResponseHandler } from '../../utils/serviceResponseHandler';
-import { paginationSchema } from '../schemas/paginationSchema';
+import { serviceResponseHandler } from '../../utils';
+import { paginationSchema } from '../schemas';
 import {
   addProductSchema,
   getProductByIdSchema,
