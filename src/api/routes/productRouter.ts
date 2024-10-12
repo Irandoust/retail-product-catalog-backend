@@ -3,6 +3,7 @@ import { validateRequest } from '../middlewares/validation';
 import {
   addProductSchema,
   getProductByIdSchema,
+  searchWithPaginationSchema,
 } from '../schemas/productSchema';
 import { StatusCodes } from 'http-status-codes';
 import { ProductRepository } from '../repositories/productRepository';
@@ -19,6 +20,12 @@ productRouter.post(
   '/',
   validateRequest(addProductSchema),
   productController.addProduct,
+);
+
+productRouter.get(
+  '/search',
+  validateRequest(searchWithPaginationSchema),
+  productController.searchProducts,
 );
 
 productRouter.get(
