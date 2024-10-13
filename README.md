@@ -84,19 +84,23 @@ This approach reduces the risk of processing malformed or invalid data, making t
 
 ### 6. **Error Handling**
 
-The application uses a centralized error handling mechanism. All errors are captured and formatted using an `exceptionHandler` utility. Errors are consistently handled, and appropriate HTTP status codes are returned to the client:
+The application uses a centralized error handling mechanism. All errors are captured and processed using the `exceptionHandler` utility, which is responsible for handling errors at the service layer. If an error occurs, it is passed up from the service layer to the controller and consistently handled.
 
-- **Validation Errors**: When the input does not pass validation, a `400 Bad Request` response is returned with details about the validation failure.
-- **Not Found Errors**: When a requested product does not exist, a `404 Not Found` response is returned.
-- **Internal Server Errors**: Any unexpected errors result in a `500 Internal Server Error` response with a generic error message.
+Errors are formatted and returned with the appropriate HTTP status codes:
 
-This centralized approach ensures consistency and clarity in how errors are handled and presented to the client.
+- **Validation Errors**: When input does not pass Zod validation, a `400 Bad Request` response is returned, along with details about the validation failure.
+- **Not Found Errors**: If a requested product does not exist, a `404 Not Found` response is returned.
+- **Internal Server Errors**: Any unexpected errors result in a `500 Internal Server Error` response, with a generic error message.
+
+This centralized approach ensures consistency and clarity in how errors are handled across the entire application, making it easier to maintain and debug.
 
 ### 7. **Response Handling**
 
 A **serviceResponseHandler** utility is used to ensure all API responses follow a standardized structure. This utility formats the response from the service layer and sends it back to the client with the appropriate HTTP status code.
 
-The **ServiceResponse** class is used to encapsulate both successful and failed responses, ensuring a consistent format across all API responses. This structure provides:
+The **ServiceResponse** class is used to encapsulate both successful and failed responses, ensuring a consistent format across all API responses. This uniformity reduces inconsistencies and ensures a standardized structure for handling both success and error cases, regardless of the route.
+
+#### Key Response Types:
 
 - **Success Responses**:
 
@@ -111,7 +115,7 @@ The **ServiceResponse** class is used to encapsulate both successful and failed 
   - Return a `null` or `undefined` data field.
   - Have an appropriate HTTP status code (e.g., `400 Bad Request`, `404 Not Found`, `500 Internal Server Error`).
 
-By using this approach, response formatting is reused across the entire application, reducing duplication and maintaining consistency.
+This approach ensures uniformity across all API responses, making the application easier to maintain and extend as new features are added.
 
 ### 8. **Rate Limiting**
 
@@ -120,7 +124,9 @@ The application includes **rate limiting** to prevent abuse of the API. By defau
 - **`COMMON_RATE_LIMIT_MAX_REQUESTS`**: Maximum number of requests allowed within the specified time window (default is `100`).
 - **`COMMON_RATE_LIMIT_WINDOW_MS`**: Time window for rate limiting in milliseconds (default is `60000`, or 1 minute).
 
-Rate limiting is implemented using the `express-rate-limit` package. This helps to prevent abuse by limiting the number of requests a client can make within a specific timeframe. In the future, if an API gateway is introduced in front of the application, rate limiting can be offloaded and handled at the gateway level, allowing this implementation to be removed from the application itself.
+Rate limiting is implemented using the `express-rate-limit` package. This helps to prevent abuse by limiting the number of requests a client can make within a specific timeframe.
+
+In the future, if an API gateway is introduced in front of the application, rate limiting can be offloaded and handled at the gateway level. In this case, the in-app rate limiting middleware can be removed to avoid double enforcement and potential conflicts.
 
 ---
 
@@ -201,20 +207,147 @@ npm run start
 
 - Retrieves all products with pagination.
 - **Query Parameters**:
+
   - `page`: Page number (optional).
   - `limit`: Items per page (optional).
+
+- **Success Response:**
+  ```json
+  {
+    "success": true,
+    "message": "5 Products found.",
+    "data": {
+      "page": 1,
+      "limit": 5,
+      "totalItems": 20,
+      "totalPages": 4,
+      "results": [
+        {
+          "id": "c8f4b8de-6c59-4f4e-901e-94b8c8a028c9",
+          "name": "Chair",
+          "category": "Furniture",
+          "description": "A comfortable wooden chair",
+          "price": 150.99,
+          "imageUrl": "http://example.com/chair.jpg"
+        },
+        {
+          "id": "e384b90c-e7ea-42b7-b69d-8e3f238b9f99",
+          "name": "Table",
+          "category": "Furniture",
+          "description": "A sturdy wooden table",
+          "price": 250.5,
+          "imageUrl": "http://example.com/table.jpg"
+        }
+      ]
+    },
+    "statusCode": 200
+  }
+  ```
+- **Failure Response (Invalid Pagination Parameters):**
+  ```json
+  {
+    "success": false,
+    "message": "Invalid input: page must be a positive number",
+    "data": null,
+    "statusCode": 400
+  }
+  ```
 
 ### 3. **GET /products/:id**
 
 - Retrieves a product by its ID (UUID).
 
+- **Success Response:**
+
+  ```json
+  {
+    "success": true,
+    "message": "Product found.",
+    "data": {
+      "id": "c8f4b8de-6c59-4f4e-901e-94b8c8a028c9",
+      "name": "Chair",
+      "category": "Furniture",
+      "description": "A comfortable wooden chair",
+      "price": 150.99,
+      "imageUrl": "http://example.com/chair.jpg"
+    },
+    "statusCode": 200
+  }
+  ```
+
+- **Failure Response (Product Not Found):**
+
+  ```json
+  {
+    "success": false,
+    "message": "No product found.",
+    "data": null,
+    "statusCode": 400
+  }
+  ```
+
+- **Failure Response (Invalid ID Format):**
+  ```json
+  {
+    "success": false,
+    "message": "Invalid input: id must be a valid UUID",
+    "data": null,
+    "statusCode": 400
+  }
+  ```
+
 ### 4. **GET /search**
 
 - Searches for products by name using fuzzy search.
 - **Query Parameters**:
+
   - `term`: The search term (required, minimum 3 characters).
   - `page`: Page number (optional).
   - `limit`: Items per page (optional).
+
+- **Success Response:**
+
+  ```json
+  {
+    "success": true,
+    "message": "2 Products found.",
+    "data": {
+      "page": 1,
+      "limit": 10,
+      "totalItems": 2,
+      "totalPages": 1,
+      "results": [
+        {
+          "id": "c8f4b8de-6c59-4f4e-901e-94b8c8a028c9",
+          "name": "Chair",
+          "category": "Furniture",
+          "description": "A comfortable wooden chair",
+          "price": 150.99,
+          "imageUrl": "http://example.com/chair.jpg"
+        },
+        {
+          "id": "e384b90c-e7ea-42b7-b69d-8e3f238b9f99",
+          "name": "Table",
+          "category": "Furniture",
+          "description": "A sturdy wooden table",
+          "price": 250.5,
+          "imageUrl": "http://example.com/table.jpg"
+        }
+      ]
+    },
+    "statusCode": 200
+  }
+  ```
+
+- **Failure Response (Invalid ID Format):**
+  ```json
+  {
+    "success": false,
+    "message": "Invalid input: Search term must be at least 3 characters",
+    "data": null,
+    "statusCode": 400
+  }
+  ```
 
 ---
 
