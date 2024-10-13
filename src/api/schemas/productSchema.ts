@@ -1,6 +1,16 @@
 import { z } from 'zod';
 import { paginationSchema } from './paginationSchema';
 
+/**
+ * Schema to validate the body of a request to add a new product.
+ *
+ * - `name`: The name of the product (required).
+ * - `category`: The category of the product (required).
+ * - `description`: A description of the product (required).
+ * - `price`: The price of the product (must be a positive number).
+ * - `imageUrl`: The URL for the product image (must be a valid URL).
+ * - Uses `strict()` to disallow any additional fields beyond those defined.
+ */
 export const addProductSchema = z.object({
   body: z
     .object({
@@ -13,6 +23,12 @@ export const addProductSchema = z.object({
     .strict(),
 });
 
+/**
+ * Schema to validate the route parameters for getting a product by ID.
+ *
+ * - `id`: A valid UUID representing the product's ID.
+ * - Uses `strict()` to disallow any additional parameters.
+ */
 export const getProductByIdSchema = z.object({
   params: z
     .object({
@@ -21,6 +37,12 @@ export const getProductByIdSchema = z.object({
     .strict(),
 });
 
+/**
+ * Schema to validate the search query parameter for searching products.
+ *
+ * - `term`: The search term must be at least 3 characters long.
+ * - Uses `strict()` to disallow any additional query parameters.
+ */
 const searchProductSchema = z.object({
   query: z
     .object({
@@ -31,6 +53,12 @@ const searchProductSchema = z.object({
     .strict(),
 });
 
+/**
+ * Schema to validate the search query along with pagination parameters.
+ *
+ * - Extends `searchProductSchema` to include pagination (`page`, `limit`) from `paginationSchema`.
+ * - Validates the search term as well as pagination options.
+ */
 export const searchWithPaginationSchema = searchProductSchema.extend({
   query: searchProductSchema.shape.query.extend(
     paginationSchema.shape.query.shape,
