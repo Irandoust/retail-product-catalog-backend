@@ -7,16 +7,19 @@ import cors from 'cors';
 
 const app = express();
 
+// Middleware to parse incoming JSON requests
 app.use(express.json());
 
-app.use(express.urlencoded({ extended: true }));
+// Enable CORS with specified origin
+app.use(cors({ origin: env.CORS_ORIGIN }));
 
-app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
-
+// Apply rate limiting to all routes
 app.use(rateLimiter);
 
+// Route handler for product API
 app.use('/products', productRouter);
 
+// Fallback route for undefined paths (404 handler)
 app.use('*', (_req: Request, res: Response): void => {
   res.status(StatusCodes.NOT_FOUND).send({ error: 'Not Found' });
 });
