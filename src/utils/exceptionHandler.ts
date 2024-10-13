@@ -6,7 +6,7 @@ import { ServiceResponse } from '../api/models';
  * This function is used to catch errors in the application and convert them into a
  * structured error response that includes the error message and a failure status code.
  *
- * @param {unknown} ex - The exception object (can be of any type).
+ * @param {unknown} err - The exception object (can be of any type).
  * @param {string} context - A string providing context or additional information about where the error occurred.
  * @returns {ServiceResponse} A failure response object containing the error message and a 500 Internal Server Error status code.
  */
