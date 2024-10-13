@@ -3,12 +3,15 @@ import { env } from './config';
 import { StatusCodes } from 'http-status-codes';
 import { productRouter } from './api/routes/productRouter';
 import { rateLimiter } from './api/middlewares/rateLimiter';
+import cors from 'cors';
 
 const app = express();
 
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
 
 app.use(rateLimiter);
 

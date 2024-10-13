@@ -16,4 +16,5 @@ export const env = cleanEnv(process.env, {
   }),
   COMMON_RATE_LIMIT_MAX_REQUESTS: num({ default: 100 }),
   COMMON_RATE_LIMIT_WINDOW_MS: num({ default: 100 }),
+  CORS_ORIGIN: str({ default: 'http://localhost:3001' }),
 });
